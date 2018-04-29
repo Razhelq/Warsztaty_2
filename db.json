@@ -1,6 +1,0 @@
-{
-  "username" : "postgres",
-  "passwd" : "coderslab",
-  "hostname" : "127.0.0.1",
-  "db_name" : "warsztaty"
-}
