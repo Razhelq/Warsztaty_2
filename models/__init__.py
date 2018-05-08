@@ -1,4 +1,4 @@
-from clcrypto import password_hash
+from clcrypto import password_hash, check_password
 
 
 class User(object):
@@ -21,7 +21,10 @@ class User(object):
     def hashed_password(self):
         return self.__hashed_password
 
-    def set_password(self, password, salt):
+    def check_passwd(self, password):
+        return check_password(password, self.hashed_password)
+
+    def set_password(self, password, salt=None):
         self.__hashed_password = password_hash(password, salt)
 
     def save_to_db(self, cursor):
@@ -34,10 +37,11 @@ class User(object):
             self.__id = cursor.fetchone()[0]  # albo cursor.fetchone()['id']
             return True
         else:
-            sql = """UPDATE Users SET username=%s, email=%s, hashed_password=%s,
+            sql = """UPDATE Users SET username=%s, email=%s, hashed_password=%s
             WHERE id=%s"""
             values = (self.username, self.email, self.hashed_password, self.id)
-            cursor.execut
+            cursor.execute(sql, values)
+            self.__id = cursor.fetchone()[0]
             return True
 
     @staticmethod

@@ -47,7 +47,7 @@ def password_hash(password, salt=None):
 
     # we have to encode salt & password to utf-8, this is required by the
     # hashlib library.
-    t_sha.update(salt.encode('utf-8') + password.encode('utf-8'))
+    t_sha.update(str(salt).encode('utf-8') + str(password).encode('utf-8'))
 
     # return salt & hash joined
     return salt + t_sha.hexdigest()

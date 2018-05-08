@@ -24,6 +24,7 @@ def main():
                        host=cfg_json["hostname"],
                        database=cfg_json["db_name"])
 
+
     try:
         cnx = connection(config_path)
         print("Połączono z bazą")
@@ -31,7 +32,10 @@ def main():
         print("Niepowodzenie połączenia:", e)
         exit()
 
+
+    cnx.autocommit = True
     cursor = cnx.cursor()
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username",
@@ -43,7 +47,8 @@ def main():
     parser.add_argument("-l", "--list",
                         help="wypisuje komunikaty dla uzytkownika",
                         action="store_true")
-    parser.add_argument("-t", "--to", help="odbiorca wiadomosci")
+    parser.add_argument("-t", "--to",
+                        help="odbiorca wiadomosci")
     parser.add_argument("-s", "--send",
                         help="wysyla komunikat",
                         action="store_true")
@@ -53,6 +58,8 @@ def main():
                         help="login	użytkownika	do	modyfikacji")
     parser.add_argument("-d", "--delete",
                         help="login	użytkownika	do	usunięcia")
+    parser.add_argument("-n", "--new_pass",
+                        help="nowe haslo uzytkownika")
 
 
     args = parser.parse_args()
@@ -65,6 +72,7 @@ def main():
     listing_mode = args.list
     sending_mode = args.send
     recipient = args.to
+    new_passwd = args.new_pass
     print(User)
     print("""
         uzytkownik: {}
@@ -75,25 +83,46 @@ def main():
     """.format(user, password, listing_mode, sending_mode, recipient))
 
 
-    if nalezy_stworzyc(user, password, email, edit, delete):
+    if if_create_user(user, password, email, edit, delete):
         u = User.load_user_by_name(cursor, user)
         if u:
             print("Taki użytkownik już istnieje")
         else:
-            stworz_uzytkownika(cursor, user, password, email)
+            create_user(cursor, user, password, email)
+            print("Uzytkownik stworzony")
+
+    if if_change_passwd(user, password, edit, new_passwd):
+        u = User.load_user_by_name(cursor, edit)
+        if u:
+            if u.check_passwd(password):
+                change_passwd(cursor, user, new_passwd)
+            else:
+                print("Złe hasło")
+        else:
+            print("Taki uzytkownik nie istnieje")
 
 
-def nalezy_stworzyc(user, password, email, edit, delete):
+
+def if_create_user(user, password, email, edit, delete):
     return user and password and email and not edit and not delete
 
 
-def stworz_uzytkownika(cursor, user, password, email):
+def create_user(cursor, user, password, email):
     nu = User()
     nu.username = user
-    nu.username = password
-    nu.username = email
+    nu.set_password(password)
+    nu.email = email
     nu.save_to_db(cursor)
 
+
+def if_change_passwd(user, password, edit, new_passwd):
+    return user and password and edit and new_passwd
+
+
+def change_passwd(cursor, edit, new_passwd):
+    u = User.load_user_by_name(cursor, edit)
+    u.set_password(cursor, new_passwd)
+    u.save_to_db(cursor)
 
 if __name__ == '__main__':
     main()
