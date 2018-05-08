@@ -1,8 +1,6 @@
 from psycopg2 import connect
 import json
 
-app = Flask(__name__)
-
 config_path = "db.json"
 
 def connection(config_file):
