@@ -95,7 +95,7 @@ def main():
         u = User.load_user_by_name(cursor, edit)
         if u:
             if u.check_passwd(password):
-                change_passwd(cursor, user, new_passwd)
+                change_passwd(cursor, edit, new_passwd)
             else:
                 print("Złe hasło")
         else:
@@ -121,7 +121,7 @@ def if_change_passwd(user, password, edit, new_passwd):
 
 def change_passwd(cursor, edit, new_passwd):
     u = User.load_user_by_name(cursor, edit)
-    u.set_password(cursor, new_passwd)
+    u.set_password(new_passwd)
     u.save_to_db(cursor)
 
 if __name__ == '__main__':

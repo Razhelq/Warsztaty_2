@@ -41,7 +41,6 @@ class User(object):
             WHERE id=%s"""
             values = (self.username, self.email, self.hashed_password, self.id)
             cursor.execute(sql, values)
-            self.__id = cursor.fetchone()[0]
             return True
 
     @staticmethod
