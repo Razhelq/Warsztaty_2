@@ -243,12 +243,12 @@ def check_if_messages(user, password, recipient, sending_mode, text):
     return user and password and recipient and sending_mode and text
 
 
-def message(user, recipient, text):
+def message(cursor, user, recipient, text):
     nm = Message()
     nm.from_id = user
     nm.to_id = recipient
     nm.text = text
-    nm.creatio_date = datetime.now()
+    nm.creation_date = datetime.now()
     nm.save_to_db(cursor)
 
 
