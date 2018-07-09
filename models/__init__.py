@@ -101,7 +101,6 @@ class Message(object):
     text = None
     creation_date = None
 
-
     def __init__(self):
         self.__id = -1
         self.from_id = -1
@@ -109,11 +108,9 @@ class Message(object):
         self.text = ''
         self.creation_date = 0
 
-
     @property
     def id(self):
         return self.__id
-
 
     @staticmethod
     def load_message_by_id(cursor, id):
@@ -146,7 +143,6 @@ class Message(object):
             ret.append(loaded_user)
         return ret
 
-
     @staticmethod
     def load_all_messages(cursor):
         sql = "SELECT id, from_id, to_id, text, creation_date FROM Users"
@@ -161,7 +157,6 @@ class Message(object):
             loaded_message.creation_date = row[4]
             ret.append(loaded_user)
         return ret
-
 
     def save_to_db(self, cursor):
         if self.__id == -1:
@@ -178,5 +173,3 @@ class Message(object):
             values = (self.from_id, self.to_id, self.text, self.creation_date)
             cursor.execute(sql, values)
             return True
-
-
